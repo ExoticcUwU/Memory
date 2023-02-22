@@ -18,6 +18,7 @@ Game-Function
 '''
 import sys
 import random
+import time
 from PyQt6 import QtGui
 from PyQt6.QtCore import *
 from PyQt6.QtWidgets import *
@@ -65,7 +66,7 @@ class MainWindow(QMainWindow):
             self.sizeb = 4
             self.button_size = 135
             self.button_sizeb = 169
-            self.color_list = ['Violet', 'Silver', 'Blue', 'Stell Blue', 
+            self.color_list = ['Violet', 'Silver', 'Blue', 'Steelblue', 
                                'Crimson', 'Peru', 'Orange', 'Tan', 
                                'Gold', 'Coral', 'Pink', 'Maroon']
             self.memory()
@@ -75,7 +76,7 @@ class MainWindow(QMainWindow):
             self.sizeb = 5
             self.button_size = 135
             self.button_sizeb = 135
-            self.color_list = ['Violet', 'Silver', 'Blue', 'Stell Blue', 'Crimson',
+            self.color_list = ['Violet', 'Silver', 'Blue', 'Steelblue', 'Crimson',
                                'Peru', 'Orange', 'Tan', 'Gold', 'Coral', 
                                'Pink', 'Maroon', 'Green', 'Beige', 'Indigo']
             self.memory()
@@ -85,7 +86,7 @@ class MainWindow(QMainWindow):
             self.sizeb = 6
             self.button_size = 116
             self.button_sizeb = 113
-            self.color_list = ['Violet', 'Silver', 'Blue', 'Stell Blue', 'Crimson',
+            self.color_list = ['Violet', 'Silver', 'Blue', 'Steelblue', 'Crimson',
                                'Peru', 'Orange', 'Tan', 'Gold', 'Coral', 'Pink',
                                'Maroon', 'Green', 'Beige', 'Indigo', 'Olive',
                                'Lime', 'Cornflower Blue', 'Teal', 'Turquoise','Magenta']
@@ -94,13 +95,20 @@ class MainWindow(QMainWindow):
     def memory(self):
         
         self.Layout = QGridLayout()
+
+        self.color_list.extend(self.color_list)
+        random.shuffle(self.color_list)
+        self.digits = []
+        self.counter_clicked = 0
+        #print(self.color_list)
+        
         self.buttons = []
         for i in range(self.size):
             for j in range(self.sizeb):
                 
                 self.button = QPushButton("")
+                self.button.clicked.connect(lambda checked, button=self.button: self.show_color(button))
                 self.buttons.append(self.button)
-                self.Layout.addWidget(self.button,i,j)
                 self.button.setFixedSize(self.button_sizeb, self.button_size)
                 self.Layout.addWidget(self.button,i,j)
         
@@ -122,6 +130,46 @@ class MainWindow(QMainWindow):
         self.widget_2.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.Layout.addWidget(self.widget_2,7,2)
       
+    def show_color(self, button):
+        clicked_button = self.sender()
+        cords = self.buttons.index(clicked_button)
+        self.digits.append(cords)
+
+        button.setStyleSheet(f"background-color: {self.color_list[cords]}")
+        self.counter_clicked +=1
+
+        if self.counter_clicked == 2:
+            if cords == self.digits[0]:
+                del self.digits[1]
+                self.counter_clicked -= 1
+            else:
+                b = self.check()
+                if b == True:
+                    for x in range(2):
+                        button = self.buttons[self.digits[x]]
+                        button.setEnabled(False)
+                    self.digits.clear()
+                    self.counter_clicked = 0
+
+                if b == False:
+                    time.sleep(5)
+                    for x in range(2):
+                        button = self.buttons[self.digits[x]]
+                        button.setStyleSheet("background-color: none")
+                    self.digits.clear()
+                    self.counter_clicked = 0
+
+        while self.counter_clicked == 3:
+                button.setStyleSheet("background-color: none")
+                self.counter_clicked -= 1
+                del self.digits[2]
+
+    def check(self):
+        if self.color_list[self.digits[0]] != self.color_list[self.digits[1]]:
+            return False
+        else:
+            return True
+
 app = QApplication(sys.argv)
 window = MainWindow()
 window.show()
