@@ -1,6 +1,7 @@
 '''
 David Würfl
-09.02.2023#
+09.02.2023
+Layout
 ###############
 Piero Barboza Bidner
 22.02.2023
@@ -64,6 +65,9 @@ class MainWindow(QMainWindow):
             self.sizeb = 4
             self.button_size = 135
             self.button_sizeb = 169
+            self.color_list = ['Violet', 'Silver', 'Blue', 'Stell Blue', 
+                               'Crimson', 'Peru', 'Orange', 'Tan', 
+                               'Gold', 'Coral', 'Pink', 'Maroon']
             self.memory()
             
         elif(level == 2):
@@ -71,6 +75,9 @@ class MainWindow(QMainWindow):
             self.sizeb = 5
             self.button_size = 135
             self.button_sizeb = 135
+            self.color_list = ['Violet', 'Silver', 'Blue', 'Stell Blue', 'Crimson',
+                               'Peru', 'Orange', 'Tan', 'Gold', 'Coral', 
+                               'Pink', 'Maroon', 'Green', 'Beige', 'Indigo']
             self.memory()
             
         elif(level == 3):
@@ -78,6 +85,10 @@ class MainWindow(QMainWindow):
             self.sizeb = 6
             self.button_size = 116
             self.button_sizeb = 113
+            self.color_list = ['Violet', 'Silver', 'Blue', 'Stell Blue', 'Crimson',
+                               'Peru', 'Orange', 'Tan', 'Gold', 'Coral', 'Pink',
+                               'Maroon', 'Green', 'Beige', 'Indigo', 'Olive',
+                               'Lime', 'Cornflower Blue', 'Teal', 'Turquoise','Magenta']
             self.memory()
 
     def memory(self):
