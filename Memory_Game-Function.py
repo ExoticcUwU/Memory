@@ -7,15 +7,7 @@ Piero Barboza Bidner
 22.02.2023
 Game-Function
 '''
-'''
-        self.save_action = QtGui.QAction("Save", self)
-        self.save_action.triggered.connect(self.save_score)
-        self.file_menu.addAction(self.save_action)
 
-        self.load_action = QtGui.QAction("Load", self)
-        self.load_action.triggered.connect(self.load_game)
-        self.file_menu.addAction(self.load_action)
-'''
 import sys
 import random
 import time
@@ -96,11 +88,13 @@ class MainWindow(QMainWindow):
         
         self.Layout = QGridLayout()
 
+        self.tries_counter = 0
+        self.current_pairs = int((self.size*self.sizeb) / 2)
+
         self.color_list.extend(self.color_list)
         random.shuffle(self.color_list)
         self.digits = []
         self.counter_clicked = 0
-        #print(self.color_list)
         
         self.buttons = []
         for i in range(self.size):
@@ -116,14 +110,14 @@ class MainWindow(QMainWindow):
         widget.setLayout(self.Layout)
         self.setCentralWidget(widget)
         
-        self.widget_1 = QLabel("Tries: ")
+        self.widget_1 = QLabel("Tries: 0")
         font = self.widget_1.font()
         font.setPointSize(15)
         self.widget_1.setFont(font)
         self.widget_1.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.Layout.addWidget(self.widget_1,7,0)
         
-        self.widget_2 = QLabel("Pairs left: ")
+        self.widget_2 = QLabel("Pairs left: %d" % self.current_pairs)
         font = self.widget_2.font()
         font.setPointSize(15)
         self.widget_2.setFont(font)
@@ -145,29 +139,36 @@ class MainWindow(QMainWindow):
             else:
                 b = self.check()
                 if b == True:
-                    for x in range(2):
-                        button = self.buttons[self.digits[x]]
-                        button.setEnabled(False)
+                    if self.current_pairs > 0:
+                        for x in range(2):
+                            button = self.buttons[self.digits[x]]
+                            button.setEnabled(False)
                     self.digits.clear()
                     self.counter_clicked = 0
 
                 if b == False:
-                    time.sleep(5)
+                    time.sleep(1)
                     for x in range(2):
                         button = self.buttons[self.digits[x]]
                         button.setStyleSheet("background-color: none")
                     self.digits.clear()
                     self.counter_clicked = 0
 
-        while self.counter_clicked == 3:
-                button.setStyleSheet("background-color: none")
-                self.counter_clicked -= 1
-                del self.digits[2]
-
     def check(self):
+        self.tries_counter += 1
+        self.widget_1.setText("Tries: %d" % self.tries_counter)
         if self.color_list[self.digits[0]] != self.color_list[self.digits[1]]:
             return False
         else:
+            self.current_pairs -= 1
+            self.widget_2.setText("Pairs left: %d" % self.current_pairs)
+            if self.current_pairs == 0:
+                        win_window = QMessageBox()
+                        win_window.setWindowTitle("Good Game!")
+                        win_window.setText("You have found all pairs in " + str(self.tries_counter) + " Tries.")
+                        win_window.exec()
+                        self.memory()
+                        return None
             return True
 
 app = QApplication(sys.argv)
