@@ -22,7 +22,7 @@ class MainWindow(QMainWindow):
         super().__init__()
     
         self.setWindowTitle("Memory")
-        self.setFixedSize(QSize(700, 900))
+        self.setFixedSize(QSize(900, 700))
         
         level = 1
         self.set_size(level)
@@ -58,22 +58,22 @@ class MainWindow(QMainWindow):
         if(level == 1):
             self.size = 6
             self.sizeb = 4
-            self.button_size = 135
-            self.button_sizeb = 169
+            self.button_size = 103
+            self.button_sizeb = 220
             self.memory()
             
         elif(level == 2):
             self.size = 6
             self.sizeb = 5
-            self.button_size = 135
-            self.button_sizeb = 135
+            self.button_size = 103
+            self.button_sizeb = 176
             self.memory()
             
         elif(level == 3):
             self.size = 7
             self.sizeb = 6
-            self.button_size = 116
-            self.button_sizeb = 113
+            self.button_size = 88
+            self.button_sizeb = 146
             self.memory()
 
     def memory(self):
@@ -87,7 +87,6 @@ class MainWindow(QMainWindow):
                 self.buttons.append(self.button)
                 self.Layout.addWidget(self.button,i,j)
                 self.button.setFixedSize(self.button_sizeb, self.button_size)
-                self.Layout.addWidget(self.button,i,j)
         
         widget = QWidget()
         widget.setLayout(self.Layout)
