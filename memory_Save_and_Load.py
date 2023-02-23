@@ -118,6 +118,7 @@ class MainWindow(QMainWindow):
             fobj.write(save_objects)
 
     def load_game(self):
+        print("Test")
 
         file_name =QFileDialog.getOpenFileName(self)
         with open (file_name[0], "r") as fobj:
