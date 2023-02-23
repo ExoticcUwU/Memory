@@ -79,7 +79,7 @@ class MainWindow(QMainWindow):
 
     def memory(self):
         self.num_tries =0
-        self.num_pairs =int((self.size *self.sizeb)/2)
+        self.num_pairs =int((self.size *self.sizeb)/2) #math :|
         self.level =self.diff
 
         self.Layout = QGridLayout()
@@ -110,18 +110,18 @@ class MainWindow(QMainWindow):
         self.widget_2.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.Layout.addWidget(self.widget_2,7,2)
 
-    def save_score(self,level):
-        save_objects =f"{self.diff,self.num_tries,self.num_pairs}" 
-        file_name =QFileDialog.getSaveFileName(self)
-        with open(file_name[0], "w+") as fobj:
-            fobj.write(save_objects)
+    def save_score(self): #save function
+        save_objects =f"{self.diff,self.num_tries,self.num_pairs}" #creats a string which holds all necessary values
+        file_name =QFileDialog.getSaveFileName(self) #get file name
+        with open(file_name[0], "w+") as fobj: #write in and overwrite if saved on to again
+            fobj.write(save_objects) 
 
-    def load_game(self):
+    def load_game(self): #load function
         file_name =QFileDialog.getOpenFileName(self)
         with open (file_name[0], "r") as fobj:
-            readIn =fobj.readline()
+            readIn =fobj.readline() #reads the complete line and return it as a string
         self.diff =int(readIn[1])
-        self.num_tries =int(readIn[readIn.index(",")+2]) 
+        self.num_tries =int(readIn[readIn.index(",")+2]) #read in index at given postion ',+2' =5
         self.num_pairs =int(readIn[readIn.index(")")-1])
 
         self.widget_2 =QLabel(f"Pairs left:{self.num_pairs}")#updating the labels to the loaded in values
