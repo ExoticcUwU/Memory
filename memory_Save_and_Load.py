@@ -14,8 +14,8 @@ class MainWindow(QMainWindow):
         super().__init__()
     
         self.setWindowTitle("Memory")
-        #self.setFixedSize(QSize(700, 900))
-
+        self.setFixedSize(QSize(900, 700))
+        
         self.set_size(1)
         self.safefile = False
         
@@ -54,33 +54,33 @@ class MainWindow(QMainWindow):
         
     
     def set_size(self, level, reset=False):
-        self.game=level
+        self.diff=level
      
         if(level == 1):
             self.size = 6
             self.sizeb = 4
-            self.button_size = 135
-            self.button_sizeb = 169
+            self.button_size = 103
+            self.button_sizeb = 220
             self.memory()
             
         elif(level == 2):
             self.size = 6
             self.sizeb = 5
-            self.button_size = 135
-            self.button_sizeb = 135
+            self.button_size = 103
+            self.button_sizeb = 176
             self.memory()
             
         elif(level == 3):
             self.size = 7
             self.sizeb = 6
-            self.button_size = 116
-            self.button_sizeb = 113
+            self.button_size = 88
+            self.button_sizeb = 146
             self.memory()
 
     def memory(self):
         self.num_tries =0
         self.num_pairs =int((self.size *self.sizeb)/2)
-        self.level=self.set_size
+        self.level =self.diff
 
         self.Layout = QGridLayout()
         self.buttons = []
@@ -91,8 +91,7 @@ class MainWindow(QMainWindow):
                 self.buttons.append(self.button)
                 self.Layout.addWidget(self.button,i,j)
                 self.button.setFixedSize(self.button_sizeb, self.button_size)
-                self.Layout.addWidget(self.button,i,j)
-        
+
         widget = QWidget()
         widget.setLayout(self.Layout)
         self.setCentralWidget(widget)
@@ -112,23 +111,21 @@ class MainWindow(QMainWindow):
         self.Layout.addWidget(self.widget_2,7,2)
 
     def save_score(self,level):
-        save_objects =f"{self.game,self.num_tries,self.num_pairs}" 
+        save_objects =f"{self.diff,self.num_tries,self.num_pairs}" 
         file_name =QFileDialog.getSaveFileName(self)
         with open(file_name[0], "w+") as fobj:
             fobj.write(save_objects)
 
     def load_game(self):
-        print("Test")
-
         file_name =QFileDialog.getOpenFileName(self)
         with open (file_name[0], "r") as fobj:
-            readIn=fobj.readline()
-        self.game=  int(readIn[1:2])
-        self.num_tries =int(readIn[4])
-        self.num_pairs =int(readIn[8:9])
+            readIn =fobj.readline()
+        self.diff =int(readIn[1])
+        self.num_tries =int(readIn[readIn.index(",")+2]) 
+        self.num_pairs =int(readIn[readIn.index(")")-1])
 
-        self.widget_2 = QLabel(f"Pairs left:{self.num_pairs}")
-        self.widget_1 = QLabel(f"Tries:{self.num_tries}")
+        self.widget_2 =QLabel(f"Pairs left:{self.num_pairs}")#updating the labels to the loaded in values
+        self.widget_1 =QLabel(f"Tries:{self.num_tries}")
 
 app = QApplication(sys.argv)
 window = MainWindow()
