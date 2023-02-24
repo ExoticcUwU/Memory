@@ -10,7 +10,6 @@ Game-Function
 
 import sys
 import random
-import time
 from PyQt6 import QtGui
 from PyQt6.QtCore import *
 from PyQt6.QtWidgets import *
@@ -81,11 +80,11 @@ class MainWindow(QMainWindow):
             self.color_list = ['Violet', 'Silver', 'Blue', 'Steelblue', 'Crimson',
                                'Peru', 'Orange', 'Tan', 'Gold', 'Coral', 'Pink',
                                'Maroon', 'Green', 'Beige', 'Indigo', 'Olive',
-                               'Lime', 'Cornflower Blue', 'Teal', 'Turquoise','Magenta']
+                               'Lime', 'Cornflowerblue', 'Teal', 'Turquoise','Magenta']
             self.memory()
 
     def memory(self):
-        
+
         self.Layout = QGridLayout()
 
         self.tries_counter = 0
@@ -95,7 +94,7 @@ class MainWindow(QMainWindow):
         random.shuffle(self.color_list)
         self.digits = []
         self.counter_clicked = 0
-        
+
         self.buttons = []
         for i in range(self.size):
             for j in range(self.sizeb):
@@ -147,7 +146,6 @@ class MainWindow(QMainWindow):
                     self.counter_clicked = 0
 
                 if b == False:
-                    time.sleep(1)
                     for x in range(2):
                         button = self.buttons[self.digits[x]]
                         button.setStyleSheet("background-color: none")
@@ -157,6 +155,12 @@ class MainWindow(QMainWindow):
     def check(self):
         self.tries_counter += 1
         self.widget_1.setText("Tries: %d" % self.tries_counter)
+
+        clicked_button_color = QMessageBox()
+        clicked_button_color.setWindowTitle("Colors")
+        clicked_button_color.setText("1.Color: " + self.color_list[self.digits[0]] + "\n2.Color: " + self.color_list[self.digits[1]] + "\nPress 'ENTER' to continue!")
+        clicked_button_color.exec()
+        
         if self.color_list[self.digits[0]] != self.color_list[self.digits[1]]:
             return False
         else:
