@@ -87,19 +87,21 @@ class MainWindow(QMainWindow):
 
         self.Layout = QGridLayout()
 
+        #creating multiple counters (treis, clicked_buttons, pairs)
         self.tries_counter = 0
+        self.counter_clicked = 0
         self.current_pairs = int((self.size*self.sizeb) / 2)
-
+        
+        #extending color list with itself and shuffel it
         self.color_list.extend(self.color_list)
         random.shuffle(self.color_list)
-        self.digits = []
-        self.counter_clicked = 0
 
         self.buttons = []
         for i in range(self.size):
             for j in range(self.sizeb):
                 
                 self.button = QPushButton("")
+                #connecting button to a function which a parameter 'button' is passed
                 self.button.clicked.connect(lambda checked, button=self.button: self.show_color(button))
                 self.buttons.append(self.button)
                 self.button.setFixedSize(self.button_sizeb, self.button_size)
@@ -122,57 +124,88 @@ class MainWindow(QMainWindow):
         self.widget_2.setFont(font)
         self.widget_2.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.Layout.addWidget(self.widget_2,7,2)
-      
+    
+    #functions shows color of clicked button (2 max.)
     def show_color(self, button):
+        #creating list for cord of button
+        self.digits = []
+        #getting cord of clicked button
         clicked_button = self.sender()
         cords = self.buttons.index(clicked_button)
         self.digits.append(cords)
 
+        #with the parameter button given to function, clicked button shows its color
         button.setStyleSheet(f"background-color: {self.color_list[cords]}")
+        #counter of clicked buttons
         self.counter_clicked +=1
-
+        #when counter of clicked buttons is 2
         if self.counter_clicked == 2:
+            #This checks if user has clicked same button twice
             if cords == self.digits[0]:
                 del self.digits[1]
                 self.counter_clicked -= 1
-            else:
+            #When user clicked two different buttons
+            else:  
+                #calls check function
                 b = self.check()
+                #when function returns True
                 if b == True:
-                    if self.current_pairs > 0:
-                        for x in range(2):
-                            button = self.buttons[self.digits[x]]
-                            button.setEnabled(False)
+                    #both Buttons can not be clicked again
+                    for x in range(2):
+                        button = self.buttons[self.digits[x]]
+                        button.setEnabled(False)
+                    #resetting list and counter
                     self.digits.clear()
                     self.counter_clicked = 0
-
+                #when function returns False
                 if b == False:
+                    #both Buttons will no longer show its color
                     for x in range(2):
                         button = self.buttons[self.digits[x]]
                         button.setStyleSheet("background-color: none")
+                    #resetting list and counter
                     self.digits.clear()
                     self.counter_clicked = 0
 
+    #checks if both buttons have same color(TRUE) or not(FALSE)
     def check(self):
-        self.tries_counter += 1
+        #live counter goes one up and gets updated
+        self.tries_counter += 1 
         self.widget_1.setText("Tries: %d" % self.tries_counter)
 
+        #creating Messagebox for colors of clicked buttons
         clicked_button_color = QMessageBox()
         clicked_button_color.setWindowTitle("Colors")
-        clicked_button_color.setText("1.Color: " + self.color_list[self.digits[0]] + "\n2.Color: " + self.color_list[self.digits[1]] + "\nPress 'ENTER' to continue!")
-        clicked_button_color.exec()
         
+        #when colors of button are not the same
         if self.color_list[self.digits[0]] != self.color_list[self.digits[1]]:
+            #Messagebox shows following Text
+            clicked_button_color.setText("1.Color: " + self.color_list[self.digits[0]] + "\n2.Color: " + self.color_list[self.digits[1]] + "\nClose one, try again!")
+            clicked_button_color.exec()
+            #returns False
             return False
+        
+        #when colors of buttons are the same color
         else:
+            #live counter of pairs becomes one less and gets updated
             self.current_pairs -= 1
             self.widget_2.setText("Pairs left: %d" % self.current_pairs)
+
+            #Messagebox shows following Text
+            clicked_button_color.setText("1.Color: " + self.color_list[self.digits[0]] + "\n2.Color: " + self.color_list[self.digits[1]] + "\nGreat, you found a pair!")
+            clicked_button_color.exec()
+
+            #when all pairs are found
             if self.current_pairs == 0:
+                        #Messagebox which congratulates user
                         win_window = QMessageBox()
                         win_window.setWindowTitle("Good Game!")
                         win_window.setText("You have found all pairs in " + str(self.tries_counter) + " Tries.")
                         win_window.exec()
+                        #Starts a new Game
                         self.memory()
                         return None
+            #returns True
             return True
 
 app = QApplication(sys.argv)
