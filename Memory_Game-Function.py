@@ -95,6 +95,8 @@ class MainWindow(QMainWindow):
         #extending color list with itself and shuffel it
         self.color_list.extend(self.color_list)
         random.shuffle(self.color_list)
+        #creating list for cord of button
+        self.digits = []
 
         self.buttons = []
         for i in range(self.size):
@@ -127,8 +129,6 @@ class MainWindow(QMainWindow):
     
     #functions shows color of clicked button (2 max.)
     def show_color(self, button):
-        #creating list for cord of button
-        self.digits = []
         #getting cord of clicked button
         clicked_button = self.sender()
         cords = self.buttons.index(clicked_button)
