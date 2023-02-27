@@ -1,15 +1,39 @@
 '''
-David Würfl
-09.02.2023
-Layout
-###############
-Piero Barboza Bidner
-22.02.2023
-Game-Function
-###############
-Exoticc
-23.02.2023
-SaveAndLoad
+###########################################################
+#  David Würfl  #  Piero Barboza Bidner  #  Luca Brecher  #
+#  09.02.2023   #  22.02.2023            #  23.02.2023    #
+#  Layout       #  Game-Function         #  SaveAndLoad   #
+###########################################################
+##Memory Game with PyQt6##
+
+User can choose between 3 difficultys (Small, Medium, Big).
+    -The only differenz is the number of pairs which has to be found (size of field)
+
+Under the field, user can see a two live counters:
+    -one for his tries
+    -one for how many pairs are left
+
+User can clicked a maximum of 2 Buttons, color of button is shown when clicked.
+When max. of 2 Buttons where clicked, live counter of tries goes one up and a function is called which checks if both colors are the same.
+    Colors are the same:
+        -Buttons will always show their color
+        -Buttons can not be clicked again
+        -live Counter of pairs becomes one less
+    
+    Colors are different:
+        -Button will not show its color again until it is clicked again
+
+User has the option to save and load a game_file.
+    following data is saved an loaded:
+        -Counter of tries
+        -Counter of pairs
+        -Difficulty
+    
+    If game_file is loaded:
+        -live counters are set to the saved value
+        -found pairs are displayed on the field
+
+Game is won, when user found all pairs.
 '''
 
 import sys
@@ -28,7 +52,6 @@ class MainWindow(QMainWindow):
         self.setFixedSize(QSize(900, 700))
         #sets starting field-size
         self.set_size(1)
-        self.safefile = False
         
         #creates menu bar
         self.menu = self.menuBar()
@@ -58,21 +81,26 @@ class MainWindow(QMainWindow):
         
         self.small_action = QtGui.QAction("Small", self)
         #sets field-size to small
-        self.small_action.triggered.connect (lambda:self.set_size(1, True))
+        self.small_action.triggered.connect (lambda:self.set_size(1, False))
         self.size_menu.addAction(self.small_action)
 
         self.medium_action = QtGui.QAction("Medium", self)
         #sets field-size to medium
-        self.medium_action.triggered.connect(lambda: self.set_size(2, True))
+        self.medium_action.triggered.connect(lambda: self.set_size(2, False))
         self.size_menu.addAction(self.medium_action)
 
         self.big_action = QtGui.QAction("Big", self)
         #sets field-size to big
-        self.big_action.triggered.connect(lambda: self.set_size(3, True))
+        self.big_action.triggered.connect(lambda: self.set_size(3, False))
         self.size_menu.addAction(self.big_action)
 
     def set_size(self, level, reset=False):
         self.diff =level
+        #check if file was loaded
+        if reset == True:
+            self.load_data = True
+        else:
+            self.load_data = False
         
         #defines size and ammount of buttons for small playfield
         if(level == 1):
@@ -110,7 +138,7 @@ class MainWindow(QMainWindow):
             self.color_list = ['Violet', 'Silver', 'Blue', 'Steelblue', 'Crimson',
                                'Peru', 'Orange', 'Tan', 'Gold', 'Coral', 'Pink',
                                'Maroon', 'Green', 'Beige', 'Indigo', 'Olive',
-                               'Lime', 'Cornflower Blue', 'Teal', 'Turquoise','Magenta']
+                               'Lime', 'Cornflowerblue', 'Teal', 'Turquoise','Magenta']
             self.memory()
 
     def memory(self):
@@ -119,11 +147,6 @@ class MainWindow(QMainWindow):
         self.Layout = QGridLayout()
         self.level=self.diff
 
-        #creating multiple counters (treis, clicked_buttons, pairs)
-        self.tries_counter = 0
-        self.counter_clicked = 0
-        self.current_pairs = int((self.size*self.sizeb) / 2)
-        
         #extending color list with itself and shuffel it
         self.color_list.extend(self.color_list)
         random.shuffle(self.color_list)
@@ -144,14 +167,50 @@ class MainWindow(QMainWindow):
                 self.button.setFixedSize(self.button_sizeb, self.button_size)
                 #adds buttons
                 self.Layout.addWidget(self.button,i,j)
-        
+
+        ############################################################
+        #creating multiple counters (treis, clicked_buttons, pairs)
+        self.counter_clicked = 0
+        #when file is loaded
+        if self.load_data != True:
+            #setting counters to 0 when no data is loaded
+            self.tries_counter = 0
+            self.current_pairs = int((self.size*self.sizeb) / 2)
+        else:
+            self.load_data = False
+            #get number of pair for diff which was loaded
+            if self.diff == 1:
+                pair = 12
+            elif self.diff == 2:
+                pair = 15
+            elif self.diff == 3:
+                pair = 21
+
+            #color list 
+            color_list = ['Violet', 'Silver', 'Blue', 'Steelblue', 'Crimson',
+                               'Peru', 'Orange', 'Tan', 'Gold', 'Coral', 'Pink',
+                               'Maroon', 'Green', 'Beige', 'Indigo', 'Olive',
+                               'Lime', 'Cornflowerblue', 'Teal', 'Turquoise','Magenta']
+
+            #list for indexes of buttons
+            button_index = []
+            #get indexes of color for buttons
+            for pair in range(pair-self.current_pairs):
+                color_index = [i for i, x in enumerate(self.color_list) if x == color_list[pair]]
+                button_index.extend(color_index)
+            #show color of buttons and buttons can not longer be clicked
+            for b in range(len(button_index)):
+                button = self.buttons[button_index[b]]
+                button.setStyleSheet(f"background-color: {self.color_list[button_index[b]]}")
+                button.setEnabled(False)
+        ############################################################
         #creates Qt widget for the window
         widget = QWidget()
         widget.setLayout(self.Layout)
         self.setCentralWidget(widget)
         
         #creates widget for the amount of tries
-        self.widget_1 = QLabel("Tries: 0")
+        self.widget_1 = QLabel("Tries: %d" % self.tries_counter)
         font = self.widget_1.font()
         font.setPointSize(15)
         self.widget_1.setFont(font)
@@ -256,13 +315,17 @@ class MainWindow(QMainWindow):
     def load_game(self): #load function
         file_name =QFileDialog.getOpenFileName(self)
         with open (file_name[0], "r") as fobj:
-            readIn =fobj.readline() #reads the complete line and return it as a string
-        self.diff =int(readIn[1])
-        self.tries_counter =int(readIn[readIn.index(",")+2]) #read in index at given postion ',+2' =5
-        self.current_pairs =int(readIn[readIn.index(")")-1])
+            readIn = fobj.readline().strip("()").split(",") #strips away the brackets and splits the string into a list with comma as a separator
+        self.diff = int(readIn[0]) #read in index
+        self.tries_counter = int(readIn[1]) 
+        self.current_pairs = int(readIn[2])
 
-        self.widget_2 =QLabel(f"Pairs left:{self.current_pairs}")#updating the labels to the loaded in values
-        self.widget_1 =QLabel(f"Tries:{self.tries_counter}")
+        #set load to True when file is loaded
+        load_data = True
+
+        self.widget_2.setText(f"Pairs left: {self.current_pairs}")#updating the labels to the loaded in values
+        self.widget_1.setText(f"Tries: {self.tries_counter}")
+        self.set_size(self.diff, load_data) #commit to upper defined function
 
 app = QApplication(sys.argv)
 window = MainWindow()
