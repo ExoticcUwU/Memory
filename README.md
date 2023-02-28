@@ -1,12 +1,15 @@
 # Memory
 
-User can choose between 3 difficultys (Small, Medium, Big).
-    -The only differenz is the number of pairs which has to be found (size of field)
-Under the field, user can see a two live counters:
+Users can choose between 3 difficulties (Small, Medium, Big).
+    -The only difference is the field size, with the amount of pairs contained in
+
+Under the game field the users can see two live counters:
     -one for his tries
     -one for how many pairs are left
-User can clicked a maximum of 2 Buttons, color of button is shown when clicked.
-When max. of 2 Buttons where clicked, live counter of tries goes one up and a function is called which checks if both colors are the same.
+
+User can click a maximum of 2 buttons, when the buttons are clicked the colors will be visible
+When a max. of 2 buttons were clicked, the live counter of tries goes one up and a function is called, which checks if:
+
     Colors are the same:
         -Buttons will always show their color
         -Buttons can not be clicked again
@@ -14,7 +17,8 @@ When max. of 2 Buttons where clicked, live counter of tries goes one up and a fu
     
     Colors are different:
         -Button will not show its color again until it is clicked again
-User has the option to save and load a game_file.
+        
+Users have the options to save and load a game_file.
     following data is saved an loaded:
         -Counter of tries
         -Counter of pairs
@@ -23,4 +27,5 @@ User has the option to save and load a game_file.
     If game_file is loaded:
         -live counters are set to the saved value
         -found pairs are displayed on the field
-Game is won, when user found all pairs.
+
+If all Pairs are found the game is won!, dear peru the color :)
